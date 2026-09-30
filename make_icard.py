@@ -18,7 +18,7 @@ string so that QR numeric mode can be used for maximum density.
 
 Expected files in the working directory:
   Background.png
-  icard_sign.key    (from gen_cert.py)
+  certsnkeys/icard_sign.key    (from gen_cert.py)
 
 Usage:
   python3 make_icard.py \\
@@ -425,7 +425,7 @@ def main():
 
     # Files
     parser.add_argument("--background",    default="Background.png")
-    parser.add_argument("--key",           default="icard_sign.key",
+    parser.add_argument("--key",           default="certsnkeys/icard_sign.key",
                         help="PEM private key from gen_cert.py")
     parser.add_argument("--output",        default="icard")
 

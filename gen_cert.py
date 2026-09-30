@@ -3,9 +3,9 @@
 Generate an RSA-2048 private key and a self-signed X.509 certificate
 in the same style as the UIDAI signing cert.
 
-Outputs:
-  icard_sign.key  - PEM private key (keep this secret)
-  icard_sign.cer  - PEM certificate (distribute with the card reader)
+Outputs (inside the certsnkeys/ folder):
+  certsnkeys/icard_sign.key  - PEM private key (keep this secret)
+  certsnkeys/icard_sign.cer  - PEM certificate (distribute with the card reader)
 
 Usage:
   python3 gen_cert.py [--org "My Organisation"] [--cn "DS MYORG 01"]
@@ -20,6 +20,8 @@ from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
+OUT_DIR = "certsnkeys"
+
 
 def main():
     parser = argparse.ArgumentParser(description="Generate icard signing key + cert")
@@ -31,8 +33,8 @@ def main():
     parser.add_argument("--ou",      default="Technology Centre")
     parser.add_argument("--years",   default=3, type=int,
                         help="Certificate validity in years")
-    parser.add_argument("--key-out", default="icard_sign.key")
-    parser.add_argument("--cer-out", default="icard_sign.cer")
+    parser.add_argument("--key-out", default=f"{OUT_DIR}/icard_sign.key")
+    parser.add_argument("--cer-out", default=f"{OUT_DIR}/icard_sign.cer")
     args = parser.parse_args()
 
     # --- Generate RSA-2048 private key ---
@@ -83,6 +85,7 @@ def main():
 
     # --- Write private key ---
     key_path = Path(args.key_out)
+    key_path.parent.mkdir(parents=True, exist_ok=True)
     key_path.write_bytes(
         key.private_bytes(
             encoding=serialization.Encoding.PEM,
@@ -94,6 +97,7 @@ def main():
 
     # --- Write certificate ---
     cer_path = Path(args.cer_out)
+    cer_path.parent.mkdir(parents=True, exist_ok=True)
     cer_path.write_bytes(cert.public_bytes(serialization.Encoding.PEM))
     print(f"Certificate : {cer_path}  ← distribute with reader")
 
