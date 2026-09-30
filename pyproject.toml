@@ -7,7 +7,14 @@ authors = [
     { name = "sarathrajendran552", email = "sarath.tg@gmail.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "cryptography>=50.0.1",
+    "glymur>=0.14.8",
+    "opencv-python>=5.0.0.93",
+    "packaging>=26.3",
+    "pillow>=12.3.0",
+    "qrcode>=8.2",
+]
 
 [project.scripts]
 icardgenerator = "icardgenerator:main"
