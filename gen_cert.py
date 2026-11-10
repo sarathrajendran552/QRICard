@@ -13,6 +13,7 @@ Usage:
 
 import argparse
 import datetime
+import getpass
 from pathlib import Path
 
 from cryptography import x509
@@ -86,13 +87,26 @@ def main():
     # --- Write private key ---
     key_path = Path(args.key_out)
     key_path.parent.mkdir(parents=True, exist_ok=True)
+
+    password = getpass.getpass("Enter private key passphrase: ")
+    confirm = getpass.getpass("Confirm passphrase: ")
+
+    if password != confirm:
+      raise ValueError("Passphrases do not match")
+
+    if not password:
+      raise ValueError("Passphrase cannot be empty")
+
     key_path.write_bytes(
-        key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.NoEncryption(),
-        )
+      key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.TraditionalOpenSSL,
+        encryption_algorithm=serialization.BestAvailableEncryption(
+            password.encode()
+        ),
+      )
     )
+  
     print(f"Private key : {key_path}  ← keep secret")
 
     # --- Write certificate ---
